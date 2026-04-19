@@ -5,6 +5,16 @@
 
 @custom-variant dark (&:is(.dark *));
 
+/* Hide scrollbar but keep scrolling */
+.no-scrollbar::-webkit-scrollbar {
+  display: none; /* Chrome, Safari */
+}
+
+.no-scrollbar {
+  -ms-overflow-style: none;  /* IE, Edge */
+  scrollbar-width: none;     /* Firefox */
+}
+
 :root {
   --text: #6b6375;
   --text-h: #08060d;
@@ -13,7 +23,7 @@
   --code-bg: #f4f3ec;
   --accent: oklch(0.97 0 0);
   --accent-bg: rgba(170, 59, 255, 0.1);
-  --accent-border: rgba(170, 59, 255, 0.5);
+  --accent-border: rgba(0, 102, 255, 0.5);
   --social-bg: rgba(244, 243, 236, 0.5);
   --shadow:
     rgba(0, 0, 0, 0.1) 0 10px 15px -3px, rgba(0, 0, 0, 0.05) 0 4px 6px -2px;
@@ -31,6 +41,7 @@
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  scroll-behavior: smooth;
 
   @media (max-width: 1024px) {
     font-size: 16px;
@@ -38,15 +49,15 @@
 
   --background: oklch(1 0 0);
 
-  --foreground: oklch(0.145 0 0);
+  --foreground: oklch(100% 0.00011 271.152);
 
   --card: oklch(1 0 0);
 
   --card-foreground: oklch(0.145 0 0);
 
-  --popover: oklch(1 0 0);
+  --popover: oklch(28.908% 0.00003 271.152);
 
-  --popover-foreground: oklch(0.145 0 0);
+  --popover-foreground: oklch(100% 0.00011 271.152);
 
   --primary: oklch(0.488 0.243 264.376);
 
@@ -54,13 +65,13 @@
 
   --secondary: oklch(0.967 0.001 286.375);
 
-  --secondary-foreground: oklch(0.21 0.006 285.885);
+  --secondary-foreground: oklch(0% 0 0);
 
-  --muted: oklch(0.97 0 0);
+  --muted: oklch(34.07% 0.00004 271.152);
 
   --muted-foreground: oklch(0.556 0 0);
 
-  --accent-foreground: oklch(0.205 0 0);
+  --accent-foreground: oklch(0% 0 0);
 
   --destructive: oklch(0.577 0.245 27.325);
 
@@ -88,7 +99,7 @@
 
   --sidebar-primary-foreground: oklch(0.97 0.014 254.604);
 
-  --sidebar-accent: oklch(0.97 0 0);
+  --sidebar-accent: oklch(100% 0.00011 271.152);
 
   --sidebar-accent-foreground: oklch(0.205 0 0);
 
@@ -99,15 +110,15 @@
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --text: #9ca3af;
-    --text-h: #f3f4f6;
+    --text: #ffffff;
+    --text-h: #ffffff;
     --bg: #16171d;
     --border: #2e303a;
     --code-bg: #1f2028;
-    --accent: #c084fc;
+    --accent: #2080ff;
     --accent-bg: rgba(192, 132, 252, 0.15);
     --accent-border: rgba(192, 132, 252, 0.5);
-    --social-bg: rgba(47, 48, 58, 0.5);
+    --social-bg: rgba(255, 255, 255, 0.5);
     --shadow:
       rgba(0, 0, 0, 0.4) 0 10px 15px -3px, rgba(0, 0, 0, 0.25) 0 4px 6px -2px;
   }
@@ -118,7 +129,7 @@
 }
 
 #root {
-  width: 1126px;
+  width: 100%;
   max-width: 100%;
   margin: 0 auto;
   text-align: center;
@@ -245,3 +256,54 @@ p {
     @apply bg-background text-foreground;}
   html {
     @apply font-sans;}}
+
+    .sa2-popup .mapboxgl-popup-content {
+  background: rgba(15, 15, 20, 0.95);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 10px;
+  padding: 0;
+  color: white;
+  font-family: inherit;
+  min-width: 220px;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.5);
+}
+
+.sa2-popup .mapboxgl-popup-tip {
+  border-top-color: rgba(15, 15, 20, 0.95);
+}
+
+.sa2-popup-inner {
+  padding: 12px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.sa2-popup-title {
+  font-weight: 700;
+  font-size: 14px;
+  margin-bottom: 6px;
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+  padding-bottom: 8px;
+}
+
+.sa2-popup-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  gap: 16px;
+}
+
+.mapboxgl-popup-close-button {
+  width: 24px;
+  height: 24px;
+  font-size: 24px;
+}
+
+.sa2-popup-row span:first-child {
+  color: rgba(255,255,255,0.5);
+}
+
+.sa2-popup-row span:last-child {
+  font-weight: 600;
+}
