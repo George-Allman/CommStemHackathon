@@ -19,6 +19,7 @@ import json
 import math
 import sys
 import pandas as pd
+import os
 
 
 # ---------------------------------------------------------------------------
@@ -95,18 +96,21 @@ def csv_to_geojson(
     lon_col: str = "longitude",
     side_m: float = 100.0,
     sa2_geojson_path: str | None = None,
+    land_union_cache_path: str | None = None,
 ) -> None:
     """
     Read `csv_path`, build one GeoJSON Feature per row, write to `geojson_path`.
 
     Parameters
     ----------
-    csv_path         : path to the input CSV file
-    geojson_path     : path for the output GeoJSON file
-    lat_col          : name of the latitude column  (default: 'latitude')
-    lon_col          : name of the longitude column (default: 'longitude')
-    side_m           : side length of each square in metres (default: 100)
-    sa2_geojson_path : optional path to SA2 GeoJSON for land filtering
+    csv_path               : path to the input CSV file
+    geojson_path           : path for the output GeoJSON file
+    lat_col                : name of the latitude column  (default: 'latitude')
+    lon_col                : name of the longitude column (default: 'longitude')
+    side_m                 : side length of each square in metres (default: 100)
+    sa2_geojson_path       : optional path to SA2 GeoJSON for land filtering
+    land_union_cache_path  : optional path to cache the land union as WKB
+                             (defaults to sa2_geojson_path + '.union.wkb')
     """
     print(f"Reading  : {csv_path}")
     df = pd.read_csv(csv_path)
@@ -120,19 +124,32 @@ def csv_to_geojson(
     # ── Build land union for water filtering ──────────────────────────────
     land_union = None
     if sa2_geojson_path:
-        print(f"Loading SA2 boundaries for land filter: {sa2_geojson_path}")
-        from shapely.geometry import shape, Point
+        from shapely.geometry import shape
         from shapely.ops import unary_union
-        with open(sa2_geojson_path, "r") as f:
-            sa2 = json.load(f)
-        polys = [
-            shape(f["geometry"])
-            for f in sa2["features"]
-            if f.get("geometry") is not None
-        ]
-        from shapely import prepared
-        land_union = prepared.prep(unary_union(polys))
-        print(f"  Built union of {len(polys):,} SA2 polygons.")
+        from shapely import prepared, wkb
+
+        cache = land_union_cache_path or (sa2_geojson_path + ".union.wkb")
+
+        if os.path.exists(cache):
+            print(f"Loading cached land union: {cache}")
+            with open(cache, "rb") as f:
+                raw_union = wkb.loads(f.read())
+        else:
+            print(f"Loading SA2 boundaries for land filter: {sa2_geojson_path}")
+            with open(sa2_geojson_path, "r") as f:
+                sa2 = json.load(f)
+            polys = [
+                shape(feat["geometry"])
+                for feat in sa2["features"]
+                if feat.get("geometry") is not None
+            ]
+            raw_union = unary_union(polys)
+            print(f"  Built union of {len(polys):,} SA2 polygons.")
+            with open(cache, "wb") as f:
+                f.write(wkb.dumps(raw_union))
+            print(f"  Saved cache: {cache}")
+
+        land_union = prepared.prep(raw_union)
 
     # Columns to include as properties (everything except lat/lon)
     property_cols = [c for c in df.columns if c not in (lat_col, lon_col)]

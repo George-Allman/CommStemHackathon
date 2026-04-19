@@ -195,6 +195,7 @@ function App() {
   const [showSupplyZones, setShowSupplyZones] = React.useState(false);
 
   const [storeSpacing, setStoreSpacing] = React.useState(1000);
+  const [customerAffluence, setCustomerAffluence] = React.useState(50);
   const [isPipelineRunning, setIsPipelineRunning] = React.useState(false);
 
   // ── Go-to location inputs ────────────────────────────────────────────────
@@ -577,6 +578,18 @@ function App() {
                   onValueChange={([val]) => setStoreSpacing(val)}
                   max={10000}
                   step={100}
+                  className="w-full"
+                />
+              </div>
+              <div className="flex flex-col gap-2">
+                <p className="text-sm text-left font-semibold text-white/60 uppercase tracking-wider">
+                  Customer Affluence: {customerAffluence} 
+                </p>
+                <Slider
+                  value={[customerAffluence]}
+                  onValueChange={([val]) => setCustomerAffluence(val)}
+                  max={100}
+                  step={1}
                   className="w-full"
                 />
               </div>
